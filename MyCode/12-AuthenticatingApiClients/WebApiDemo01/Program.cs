@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Nito.AsyncEx;
 using Serilog;
 using Serilog.WxLibrary;
 using WebApiDemo01.Models;
@@ -53,8 +54,10 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
+AsyncContext.Run(async () => await ApplicationDbContextSeed.SeedData(app.Services));
 app.Run();

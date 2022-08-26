@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApiDemo01.Models;
 
-public class ProductDbContext : IdentityDbContext<IdentityUser>
+public class ProductDbContext : IdentityDbContext<User>
 {
     public ProductDbContext(DbContextOptions<ProductDbContext> options)
         : base(options) { }
@@ -15,6 +15,7 @@ public class ProductDbContext : IdentityDbContext<IdentityUser>
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        base.OnModelCreating(builder);
         builder.Entity<Product>().HasData(
             new Product
             {

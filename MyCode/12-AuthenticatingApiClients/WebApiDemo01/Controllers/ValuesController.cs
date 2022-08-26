@@ -1,11 +1,12 @@
 ﻿// Copyright (c) xxx, 2022. All rights reserved.
 
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApiDemo01.Models;
 
 namespace WebApiDemo01.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("/api/data")]
 public class ValuesController : ControllerBase
