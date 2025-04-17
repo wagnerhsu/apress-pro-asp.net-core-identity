@@ -11,75 +11,74 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using IdentityApp.Services;
 
-namespace IdentityApp {
+namespace IdentityApp; 
 
-    public class Startup {
+public class Startup {
 
-        public Startup(IConfiguration config) => Configuration = config;
+    public Startup(IConfiguration config) => Configuration = config;
 
-        private IConfiguration Configuration { get; set; }
+    private IConfiguration Configuration { get; set; }
 
-        public void ConfigureServices(IServiceCollection services) {
-            services.AddControllersWithViews();
-            services.AddRazorPages();
-            services.AddDbContext<ProductDbContext>(opts => {
-                opts.UseSqlServer(
-                    Configuration["ConnectionStrings:AppDataConnection"]);
+    public void ConfigureServices(IServiceCollection services) {
+        services.AddControllersWithViews();
+        services.AddRazorPages();
+        services.AddDbContext<ProductDbContext>(opts => {
+            opts.UseSqlServer(
+                Configuration["ConnectionStrings:AppDataConnection"]);
+        });
+
+        services.AddHttpsRedirection(opts => {
+            opts.HttpsPort = 44350;
+        });
+
+        services.AddDbContext<IdentityDbContext>(opts => {
+            opts.UseSqlServer(
+                Configuration["ConnectionStrings:IdentityConnection"],
+                opts => opts.MigrationsAssembly("IdentityApp")
+            );
+        });
+
+        services.AddScoped<IEmailSender, ConsoleEmailSender>();
+
+        services.AddDefaultIdentity<IdentityUser>(opts => {
+            opts.Password.RequiredLength = 8;
+            opts.Password.RequireDigit = false;
+            opts.Password.RequireLowercase = false;
+            opts.Password.RequireUppercase = false;
+            opts.Password.RequireNonAlphanumeric = false;
+            opts.SignIn.RequireConfirmedAccount = true;
+        }).AddEntityFrameworkStores<IdentityDbContext>();
+
+        services.AddAuthentication()
+            .AddFacebook(opts => {
+                opts.AppId = Configuration["Facebook:AppId"];
+                opts.AppSecret = Configuration["Facebook:AppSecret"];
+            })
+            .AddGoogle(opts => {
+                opts.ClientId = Configuration["Google:ClientId"];
+                opts.ClientSecret = Configuration["Google:ClientSecret"];
+            })
+            .AddTwitter(opts => {
+                opts.ConsumerKey = Configuration["Twitter:ApiKey"];
+                opts.ConsumerSecret = Configuration["Twitter:ApiSecret"];
             });
+    }
 
-            services.AddHttpsRedirection(opts => {
-                opts.HttpsPort = 44350;
-            });
-
-            services.AddDbContext<IdentityDbContext>(opts => {
-                opts.UseSqlServer(
-                    Configuration["ConnectionStrings:IdentityConnection"],
-                    opts => opts.MigrationsAssembly("IdentityApp")
-                );
-            });
-
-            services.AddScoped<IEmailSender, ConsoleEmailSender>();
-
-            services.AddDefaultIdentity<IdentityUser>(opts => {
-                opts.Password.RequiredLength = 8;
-                opts.Password.RequireDigit = false;
-                opts.Password.RequireLowercase = false;
-                opts.Password.RequireUppercase = false;
-                opts.Password.RequireNonAlphanumeric = false;
-                opts.SignIn.RequireConfirmedAccount = true;
-            }).AddEntityFrameworkStores<IdentityDbContext>();
-
-            services.AddAuthentication()
-                .AddFacebook(opts => {
-                    opts.AppId = Configuration["Facebook:AppId"];
-                    opts.AppSecret = Configuration["Facebook:AppSecret"];
-                })
-                .AddGoogle(opts => {
-                    opts.ClientId = Configuration["Google:ClientId"];
-                    opts.ClientSecret = Configuration["Google:ClientSecret"];
-                })
-                .AddTwitter(opts => {
-                    opts.ConsumerKey = Configuration["Twitter:ApiKey"];
-                    opts.ConsumerSecret = Configuration["Twitter:ApiSecret"];
-                });
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
+        if (env.IsDevelopment()) {
+            app.UseDeveloperExceptionPage();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
-            if (env.IsDevelopment()) {
-                app.UseDeveloperExceptionPage();
-            }
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+        app.UseRouting();
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints => {
-                endpoints.MapDefaultControllerRoute();
-                endpoints.MapRazorPages();
-            });
-        }
+        app.UseEndpoints(endpoints => {
+            endpoints.MapDefaultControllerRoute();
+            endpoints.MapRazorPages();
+        });
     }
 }

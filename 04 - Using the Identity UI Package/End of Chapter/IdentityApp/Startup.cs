@@ -11,55 +11,62 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using IdentityApp.Services;
 
-namespace IdentityApp {
+namespace IdentityApp;
 
-    public class Startup {
+public class Startup
+{
 
-        public Startup(IConfiguration config) => Configuration = config;
+    public Startup(IConfiguration config) => Configuration = config;
 
-        private IConfiguration Configuration { get; set; }
+    private IConfiguration Configuration { get; set; }
 
-        public void ConfigureServices(IServiceCollection services) {
-            services.AddControllersWithViews();
-            services.AddRazorPages();
-            services.AddDbContext<ProductDbContext>(opts => {
-                opts.UseSqlServer(
-                    Configuration["ConnectionStrings:AppDataConnection"]);
-            });
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddControllersWithViews();
+        services.AddRazorPages();
+        services.AddDbContext<ProductDbContext>(opts =>
+        {
+            opts.UseSqlServer(
+                Configuration["ConnectionStrings:AppDataConnection"]);
+        });
 
-            services.AddHttpsRedirection(opts => {
-                opts.HttpsPort = 44350;
-            });
+        services.AddHttpsRedirection(opts =>
+        {
+            opts.HttpsPort = 44350;
+        });
 
-            services.AddDbContext<IdentityDbContext>(opts => {
-                opts.UseSqlServer(
-                    Configuration["ConnectionStrings:IdentityConnection"],
-                    opts => opts.MigrationsAssembly("IdentityApp")
-                );
-            });
+        services.AddDbContext<IdentityDbContext>(opts =>
+        {
+            opts.UseSqlServer(
+                Configuration["ConnectionStrings:IdentityConnection"],
+                opts => opts.MigrationsAssembly("IdentityApp")
+            );
+        });
 
-            services.AddScoped<IEmailSender, ConsoleEmailSender>();
+        services.AddScoped<IEmailSender, ConsoleEmailSender>();
 
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddEntityFrameworkStores<IdentityDbContext>();
+        services.AddDefaultIdentity<IdentityUser>()
+            .AddEntityFrameworkStores<IdentityDbContext>();
+    }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
-            if (env.IsDevelopment()) {
-                app.UseDeveloperExceptionPage();
-            }
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+        app.UseRouting();
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints => {
-                endpoints.MapDefaultControllerRoute();
-                endpoints.MapRazorPages();
-            });
-        }
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapDefaultControllerRoute();
+            endpoints.MapRazorPages();
+        });
     }
 }
