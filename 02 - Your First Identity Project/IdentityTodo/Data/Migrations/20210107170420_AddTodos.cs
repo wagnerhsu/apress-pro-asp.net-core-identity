@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿// Copyright (c) xxx, 2025. All rights reserved.
+
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace IdentityTodo.Data.Migrations
 {

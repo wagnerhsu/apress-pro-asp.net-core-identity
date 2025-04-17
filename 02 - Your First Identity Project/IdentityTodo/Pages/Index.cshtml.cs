@@ -1,4 +1,6 @@
-﻿using IdentityTodo.Data;
+﻿// Copyright (c) xxx, 2025. All rights reserved.
+
+using IdentityTodo.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -6,13 +8,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace IdentityTodo.Pages {
+namespace IdentityTodo.Pages
+{
 
     [Authorize]
-    public class IndexModel : PageModel {
+    public class IndexModel : PageModel
+    {
         private ApplicationDbContext Context;
 
-        public IndexModel(ApplicationDbContext ctx) {
+        public IndexModel(ApplicationDbContext ctx)
+        {
             Context = ctx;
         }
 
@@ -21,22 +26,28 @@ namespace IdentityTodo.Pages {
 
         public IEnumerable<TodoItem> TodoItems { get; set; }
 
-        public void OnGet() {
+        public void OnGet()
+        {
             TodoItems = Context.TodoItems
                 .Where(t => t.Owner == User.Identity.Name).OrderBy(t => t.Task);
-            if (!ShowComplete) {
+            if (!ShowComplete)
+            {
                 TodoItems = TodoItems.Where(t => !t.Complete);
             }
             TodoItems = TodoItems.ToList();
         }
 
-        public IActionResult OnPostShowComplete() {
+        public IActionResult OnPostShowComplete()
+        {
             return RedirectToPage(new { ShowComplete });
         }
 
-        public async Task<IActionResult> OnPostAddItemAsync(string task) {
-            if (!string.IsNullOrEmpty(task)) {
-                TodoItem item = new TodoItem {
+        public async Task<IActionResult> OnPostAddItemAsync(string task)
+        {
+            if (!string.IsNullOrEmpty(task))
+            {
+                TodoItem item = new TodoItem
+                {
                     Task = task,
                     Owner = User.Identity.Name,
                     Complete = false
@@ -47,9 +58,11 @@ namespace IdentityTodo.Pages {
             return RedirectToPage(new { ShowComplete });
         }
 
-        public async Task<IActionResult> OnPostMarkItemAsync(long id) {
+        public async Task<IActionResult> OnPostMarkItemAsync(long id)
+        {
             TodoItem item = Context.TodoItems.Find(id);
-            if (item != null) {
+            if (item != null)
+            {
                 item.Complete = !item.Complete;
                 await Context.SaveChangesAsync();
             }

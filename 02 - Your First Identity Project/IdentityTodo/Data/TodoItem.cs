@@ -1,4 +1,6 @@
-﻿namespace IdentityTodo.Data {
+﻿// Copyright (c) xxx, 2025. All rights reserved.
+
+namespace IdentityTodo.Data {
 
     public class TodoItem {
 

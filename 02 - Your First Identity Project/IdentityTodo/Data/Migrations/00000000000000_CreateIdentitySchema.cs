@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) xxx, 2025. All rights reserved.
+
+using System;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 

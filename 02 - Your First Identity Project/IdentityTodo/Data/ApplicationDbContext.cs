@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// Copyright (c) xxx, 2025. All rights reserved.
+
+
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace IdentityTodo.Data {
+namespace IdentityTodo.Data
+{
 
-    public class ApplicationDbContext : IdentityDbContext {
+    public class ApplicationDbContext : IdentityDbContext
+    {
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
